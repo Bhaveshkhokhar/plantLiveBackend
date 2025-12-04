@@ -49,12 +49,7 @@ async def upload_image(file: UploadFile = File(...)):
         f.write(contents)
     
     return {
-        "status": "success",
-        "filename": unique_filename,
-        "original_filename": file.filename,
-        "file_path": file_path,
-        "content_type": file.content_type,
-        "size": len(contents)
+        "message": "uploaded successful"
     }
 
 if __name__ == "__main__":
