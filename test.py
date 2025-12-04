@@ -79,6 +79,19 @@ def predict(image_path):
     predicted_class = classes[predicted.item()]
     return predicted_class
 
+def predict_from_bytes(image_bytes):
+    """Predict from image bytes (for API use)"""
+    from io import BytesIO
+    image = Image.open(BytesIO(image_bytes)).convert("RGB")
+    input_tensor = transform(image).unsqueeze(0)
+
+    with torch.no_grad():
+        outputs = model(input_tensor)
+        _, predicted = torch.max(outputs, 1)
+
+    predicted_class = classes[predicted.item()]
+    return predicted_class
+
 # ------------------------------------------
 # 5. COMMAND LINE USAGE
 # ------------------------------------------

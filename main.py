@@ -1,9 +1,7 @@
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
-import os
-import uuid
-from datetime import datetime
+from test import predict_from_bytes
 
 app = FastAPI(
     title="Major Project API",
@@ -20,15 +18,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Create uploads directory
-UPLOAD_DIR = "uploads"
-os.makedirs(UPLOAD_DIR, exist_ok=True)
-
 @app.post("/image")
 async def upload_image(file: UploadFile = File(...)):
     """
-    Upload an image file
-    Returns the saved file path and metadata
+    Upload an image and get plant disease prediction
     """
     # Validate file type
     allowed_types = ["image/jpeg", "image/png", "image/jpg", "image/webp"]
@@ -38,18 +31,14 @@ async def upload_image(file: UploadFile = File(...)):
             detail=f"File type not allowed. Allowed types: {allowed_types}"
         )
     
-    # Generate unique filename
-    file_extension = file.filename.split(".")[-1]
-    unique_filename = f"{uuid.uuid4()}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{file_extension}"
-    file_path = os.path.join(UPLOAD_DIR, unique_filename)
-    
-    # Save file
+    # Read image bytes
     contents = await file.read()
-    with open(file_path, "wb") as f:
-        f.write(contents)
+    
+    # Get prediction from model
+    prediction = predict_from_bytes(contents)
     
     return {
-        "message": "uploaded successful"
+        "prediction": prediction
     }
 
 if __name__ == "__main__":
