@@ -5,7 +5,7 @@ from PIL import Image
 # ------------------------------------------
 # 1. LOAD SAVED MODEL
 # ------------------------------------------
-MODEL_PATH = "backend\plant-disease-model-complete.pth"
+MODEL_PATH = "backend/plant-disease-model-complete.pth"
 model = torch.load(MODEL_PATH, map_location="cpu")
 model.eval()
 
