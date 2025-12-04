@@ -1,11 +1,14 @@
 import torch
 import torchvision.transforms as transforms
 from PIL import Image
+import os
 
 # ------------------------------------------
 # 1. LOAD SAVED MODEL
 # ------------------------------------------
-MODEL_PATH = "backend/plant-disease-model-complete.pth"
+
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "plant-disease-model-complete.pth")
+
 model = torch.load(MODEL_PATH, map_location="cpu")
 model.eval()
 
