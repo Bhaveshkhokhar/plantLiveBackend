@@ -9,7 +9,12 @@ import os
 
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "plant-disease-model-complete.pth")
 
-model = torch.load(MODEL_PATH, map_location="cpu")
+# IMPORTANT FIX FOR PYTORCH 2.6+
+model = torch.load(
+    MODEL_PATH,
+    map_location="cpu",
+    weights_only=False   # <-- FIX FOR YOUR ERROR
+)
 model.eval()
 
 # ------------------------------------------
@@ -69,7 +74,7 @@ transform = transforms.Compose([
 ])
 
 # ------------------------------------------
-# 4. PREDICTION FUNCTION
+# 4. PREDICTION FUNCTIONS
 # ------------------------------------------
 def predict(image_path):
     image = Image.open(image_path).convert("RGB")
@@ -79,8 +84,7 @@ def predict(image_path):
         outputs = model(input_tensor)
         _, predicted = torch.max(outputs, 1)
 
-    predicted_class = classes[predicted.item()]
-    return predicted_class
+    return classes[predicted.item()]
 
 def predict_from_bytes(image_bytes):
     """Predict from image bytes (for API use)"""
@@ -92,8 +96,7 @@ def predict_from_bytes(image_bytes):
         outputs = model(input_tensor)
         _, predicted = torch.max(outputs, 1)
 
-    predicted_class = classes[predicted.item()]
-    return predicted_class
+    return classes[predicted.item()]
 
 # ------------------------------------------
 # 5. COMMAND LINE USAGE
